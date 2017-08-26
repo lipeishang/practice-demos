@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+</head>
+<body align="center">
+
+<button id="button">抢票</button>
+
+</body>
+
+<script type="text/javascript">
+    if (typeof(Worker) !== "undefined") {   //判断当前浏览器是不是支持worker
+        btn.onclick = function () {   //添加绑定事件
+            var worker = new Worker('./worker.js');
+// 监听事件
+// 或者可以使用 onMessage 来监听事件：
+            worker.onmessage = function (e) {
+                console.log('MAIN: ', 'RECEIVE', e.data);
+            };
+
+            worker.addEventListener('error', function (e) {
+                console.log('MAIN: ', 'ERROR', 'filename:' + e.filename + '---message:' + e.message + '---lineno:' + e.lineno);
+            });
+// 触发事件，传递信息给 Worker
+            worker.postMessage('Hello Worker, I am main.js');
+        }
+        //创建一个空数组存放worker
+        var btn = document.getElementById("button");  //获取页面抢票的按钮
+
+    };
+    var workers = [];
+</script>
+</html>

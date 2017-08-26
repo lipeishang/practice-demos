@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        div {
+            width: 150px;
+            height: 150px;
+            border: 1px solid black;
+            float: left;
+            margin: 10px;
+        }
+
+        .hasticket {
+            background: green;
+        }
+
+        .noTicket {
+            background: red;
+        }
+    </style>
+
+</head>
+<body align="center">
+<h1>售票系统</h1>
+<div id="win0">售票窗口1</div>
+<div id="win1">售票窗口2</div>
+<div id="win2">售票窗口3</div>
+<div id="win3">售票窗口4</div>
+<div id="win4">售票窗口5</div>
+
+<button id="button">抢票</button>
+
+</body>
+
+<script type="text/javascript">
+    //创建一个空数组存放worker
+    var workers = [];
+    var btn = document.getElementById("button");  //获取页面抢票的按钮
+    btn.onclick = function () {   //添加绑定事件
+        workers.length = 0;    //空数组长度初始化为0
+        //判断当前浏览器是否支持worker
+        if (typeof(Worker) !== "undefined") {   //判断当前浏览器是不是支持worker
+            //因为抢票互不影响，所以创建五个worker
+            for (var i = 0; i < 5; i++) {
+                //创建worker并把worker放在数组中
+                var worker = new Worker("getTicket.js");   //创建worker
+                worker.onmessage = getMessage;   //worker的返回值去执行getMessage函数
+                //将worker放到数组里，congworker中返回的值之后去执行后边的函数
+                workers.push(worker);
+            }
+        }
+        function getMessage(event) {
+            //获取到目标事件对象,通过下标会有延迟
+            var w = event.target;
+            var index = workers.indexOf(w);
+            var win = document.getElementById("win" + index);
+            if (event.data == 1) {
+                win.className = "hasticket";
+            } else {
+                win.className = "noTicket";
+            }
+        }
+    }
+</script>
+</html>
